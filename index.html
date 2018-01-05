@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>BHG PingPong Ladder</title>
+        <link rel="stylesheet" type="text/css" href="ladder.css">
+        <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+    	<script>
+    	  // Initialize Firebase
+            var config = {
+            apiKey: "AIzaSyDvEu4Lb-bVbdI03Takb4ER5AJ_9aZbA-c",
+            authDomain: "pingpongladder-6f7b2.firebaseapp.com",
+            databaseURL: "https://pingpongladder-6f7b2.firebaseio.com",
+            projectId: "pingpongladder-6f7b2",
+            storageBucket: "pingpongladder-6f7b2.appspot.com",
+            messagingSenderId: "8703643581"
+            };
+            firebase.initializeApp(config);
+
+
+            	// Firebase permission denied
+            // https://stackoverflow.com/questions/37403747/firebase-permission-denied
+            // when you do this for the first time, you see see lots of "Get Started" Buttons
+            // just ignore those. 
+    	</script>
+    </head>
+
+    <body>
+        <h2>Firebase Example</h2>
+        <input type='text' id='messageInput'  placeholder='Enter your data here...'>
+
+        <!-- we register the savedata here with the onclick function -->
+        <button type="button" onclick="addNewUser()">Add New User</button>
+        <br><br><br>
+        <hr>
+        <h2>Results</h2>
+        <textarea rows="10" cols="50" id="results"></textarea>
+        <script>
+            // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
+
+            var bhgPingPongLadderDB = firebase.database().ref(); 
+            var messageField = document.getElementById('messageInput');
+            var messageResults = document.getElementById('results');
+            // Save data to firebase
+            function savedata()
+            {
+            	console.log("in here");
+              var message = messageField.value;
+              bhgPingPongLadderDB.push({fieldName:'messageField', text:message});
+              messageField.value = '';
+            }
+            // Update results when data is added
+            bhgPingPongLadderDB.limitToLast(10).on('child_added', function (snapshot) {
+                var data = snapshot.val();
+                console.log(snapshot.val());
+                var message = data.text;
+                if (message != undefined)
+                {
+                  messageResults.value += '\n' + message;
+                }
+            });
+
+
+            function addNewUser()
+            {
+                console.log("in here");
+                var message = messageField.value;
+                bhgPingPongLadderDB.push({fieldName:'messageField', text:message});
+                messageField.value = '';
+            }
+
+
+            function saveToList(event)
+            {
+
+            }
+
+
+            function refreshUI(list)
+            {
+
+            }
+
+            // sign in the user before accessing the database
+            // https://stackoverflow.com/questions/37403747/firebase-permission-denied
+            // For a (slightly) more time-consuming, but more secure, solution, call one of the signIn... methods of Firebase Authentication to ensure the user is signed in before accessing the database
+            // the simplest way to do this is using anonymous authentication
+
+            /*
+            firebase.auth().signInAnonymously().catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            });
+
+            firebase.auth().onAuthStateChanged(functino(user){
+
+                if(user)
+                {
+                    // User is signed in
+                    var isAnonymous = user.isAnonymous;
+                    var uid = user.uid;
+                    var userRef = app.dataInfo.child(app.users);
+
+                    var useridRef = userRef.child(app.userid);
+
+                    useridRef.set({
+                        locations:"",
+                        theme: "",
+                        colorScheme:"",
+                        food:""
+                    });
+                }
+                else
+                {
+                    // User is signed out.
+                }
+            });
+*/
+        </script>
+    </body>
+</html>
