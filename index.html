@@ -27,10 +27,18 @@
 
     <body>
         <h2>Firebase Example</h2>
-        <input type='text' id='messageInput'  placeholder='Enter your data here...'>
+        <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
 
         <!-- we register the savedata here with the onclick function -->
         <button type="button" onclick="addNewUser()">Add New User</button>
+        
+        <!-- h1 h2 ... h6 are different HTML headings -->
+        <!-- https://www.w3schools.com/tags/tag_hn.asp -->
+        <h4>Current Players</h4>
+        <ol id="currentPlayerList"></ol>
+
+        <!-- ol defines and ordered list (just google it)-->
+
         <br><br><br>
         <hr>
         <h2>Results</h2>
@@ -39,47 +47,131 @@
             // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
 
             var bhgPingPongLadderDB = firebase.database().ref(); 
-            var messageField = document.getElementById('messageInput');
+            var newPlayerNameField = document.getElementById('newPlayerNameInput');
+
             var messageResults = document.getElementById('results');
-            // Save data to firebase
-            function savedata()
-            {
-            	console.log("in here");
-              var message = messageField.value;
-              bhgPingPongLadderDB.push({fieldName:'messageField', text:message});
-              messageField.value = '';
-            }
+            
+
             // Update results when data is added
+            /*
             bhgPingPongLadderDB.limitToLast(10).on('child_added', function (snapshot) {
                 var data = snapshot.val();
                 console.log(snapshot.val());
                 var message = data.text;
                 if (message != undefined)
                 {
-                  messageResults.value += '\n' + message;
+                    messageResults.value += '\n' + message;
                 }
+            });
+            */
+
+            // this will get fired on initial load as well as whenever there is a change in the data
+            // https://firebase.google.com/docs/database/admin/retrieve-data
+            //      
+            //      "we attach a Asynchronous listener to retrieve data. This listener is trigged once
+            //      for the initial state of the data and again anytime the data changes. 
+
+            bhgPingPongLadderDB.on("value", function (snapshot) {
+                var data = snapshot.val();
+                console.log(snapshot.val());
+                var message = data.text;
+                if (message != undefined)
+                {
+                    messageResults.value += '\n' + message;
+                }
+
+                var list = [];
+                for (var key in data)
+                {
+                    if(data.hasOwnProperty(key))
+                    {                        
+                        name = data[key].name ? data[key].name : '';
+                        if(name.trim().length > 0)
+                        {
+                            list.push({name: name, key: key})
+                        }
+                    }
+                }
+
+                refreshUI(list);
             });
 
 
             function addNewUser()
-            {
+            {                                
+                console.log("adding New User");
+                var playerName = newPlayerNameField.value.trim();
+
+                if(playerName.length > 0)
+                {
+                    saveToFirebase(playerName);        
+                }
+
+                newPlayerNameField.value = '';
+            }
+
+/*
+            // Save data to firebase
+            function addNewUser()
+            {                                
                 console.log("in here");
                 var message = messageField.value;
                 bhgPingPongLadderDB.push({fieldName:'messageField', text:message});
                 messageField.value = '';
             }
+*/
 
 
-            function saveToList(event)
+            // Saving Data to Firebase
+            // https://firebase.google.com/docs/database/admin/save-data
+            // this argument we passed into the push() function is essentially a JSON object
+            function saveToFirebase(playerName)
             {
-
+                bhgPingPongLadderDB.push({
+                    name: playerName
+                });
             }
+
 
 
             function refreshUI(list)
             {
-
+                var lis = '';
+                for(var i=0; i<list.length; i++)
+                {
+                    lis += '<li data-key="' + list[i].key + '">' + list[i].name + '</li>';
+                };
+                document.getElementById('currentPlayerList').innerHTML = lis;
             }
+
+            function genLinks(key, playerName)
+            {
+
+            };
+
+            function edit(key, playerName)
+            {
+                var playerNamePrompt = prompt("Update the playerName", playerName);
+                if(playerNamePrompt && playerNamePrompt.length > 0)
+                {
+                    
+                }
+            };
+
+            function del(key, playerName)
+            {
+
+            };
+
+            function buildEndPoint (key)
+            {
+
+            };
+
+            // tutorials used: 
+            // http://thejackalofjavascript.com/getting-started-with-firebase/
+            // https://deanhume.com/home/blogpost/a-basic-guide-to-firebase-for-the-web/10142
+
 
             // sign in the user before accessing the database
             // https://stackoverflow.com/questions/37403747/firebase-permission-denied
