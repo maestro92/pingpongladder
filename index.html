@@ -1,12 +1,42 @@
+<!-- match history -->
+
+
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
+        
+        <!-- defines the title of the document, required in all HTML documents -->
+        <!-- https://www.w3schools.com/html/html_head.asp -->
         <title>BHG PingPong Ladder</title>
-        <link rel="stylesheet" type="text/css" href="ladder.css">
+
+        <!-- link element is used to link to extenral style sheets -->
+        <link rel="stylesheet" type="text/css" href="ladder.css">        
+        
+        <h1>Big Huge Games Ping Pong Ladder</h1>
+        <!-- tabs -->    
+
+        <!-- how to center tab bar 
+             https://stackoverflow.com/questions/43000035/how-to-center-tab-bar
+        -->    
+        <div class="tab-container">
+        <div class="tab">
+            <!-- 
+            
+            https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Event_handlers
+            -->
+            <button class="tablinks" onclick="openRankingPage(event, 'Ranking')">Ranking</button>
+            <button class="tablinks" onclick="openHistoryPage(event, 'History')">History</button>      
+        </div>
+        </div>
+
         <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
     	<script>
     	  // Initialize Firebase
+
+            var databaseLink = "https://pingpongladder-6f7b2.firebaseio.com"
+
             var config = {
             apiKey: "AIzaSyDvEu4Lb-bVbdI03Takb4ER5AJ_9aZbA-c",
             authDomain: "pingpongladder-6f7b2.firebaseapp.com",
@@ -23,14 +53,19 @@
             // when you do this for the first time, you see see lots of "Get Started" Buttons
             // just ignore those. 
     	</script>
+        <script type="text/javascript" src="ladder.js"></script>
     </head>
 
+
     <body>
-        <h2>Firebase Example</h2>
+    
+        <div id="Ranking" class="tabcontent">
+            <p>Will display the current Ranking Page </p>
+            <br>
         <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
 
         <!-- we register the savedata here with the onclick function -->
-        <button type="button" onclick="addNewUser()">Add New User</button>
+        <button type="button" onclick="addNewPlayer()">Add New Player</button>
         
         <!-- h1 h2 ... h6 are different HTML headings -->
         <!-- https://www.w3schools.com/tags/tag_hn.asp -->
@@ -46,11 +81,13 @@
         <script>
             // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
 
-            var bhgPingPongLadderDB = firebase.database().ref(); 
-            var newPlayerNameField = document.getElementById('newPlayerNameInput');
+            document.getElementById("Ranking").click();
 
-            var messageResults = document.getElementById('results');
-            
+            var bhgPingPongLadderDB = firebase.database(); 
+            var playerDBref = bhgPingPongLadderDB.ref("players");
+
+
+            var messageResults = document.getElementById('results');            
 
             // Update results when data is added
             /*
@@ -71,7 +108,7 @@
             //      "we attach a Asynchronous listener to retrieve data. This listener is trigged once
             //      for the initial state of the data and again anytime the data changes. 
 
-            bhgPingPongLadderDB.on("value", function (snapshot) {
+            playerDBref.on("value", function (snapshot) {
                 var data = snapshot.val();
                 console.log(snapshot.val());
                 var message = data.text;
@@ -80,73 +117,36 @@
                     messageResults.value += '\n' + message;
                 }
 
+                console.log(message);
+
                 var list = [];
                 for (var key in data)
                 {
                     if(data.hasOwnProperty(key))
                     {                        
-                        name = data[key].name ? data[key].name : '';
+                        var playerData = data[key];
+
+                        var name = playerData.name ? playerData.name : '';
+                        var eloRating = playerData.eloRating ? playerData.eloRating : '';
+
                         if(name.trim().length > 0)
                         {
-                            list.push({name: name, key: key})
+                            list.push({name: name, eloRating: eloRating, key: key})
                         }
                     }
                 }
 
-                refreshUI(list);
+                refreshPlayerUI(list);
             });
 
 
-            function addNewUser()
-            {                                
-                console.log("adding New User");
-                var playerName = newPlayerNameField.value.trim();
-
-                if(playerName.length > 0)
-                {
-                    saveToFirebase(playerName);        
-                }
-
-                newPlayerNameField.value = '';
-            }
-
-/*
-            // Save data to firebase
-            function addNewUser()
-            {                                
-                console.log("in here");
-                var message = messageField.value;
-                bhgPingPongLadderDB.push({fieldName:'messageField', text:message});
-                messageField.value = '';
-            }
-*/
-
-
-            // Saving Data to Firebase
-            // https://firebase.google.com/docs/database/admin/save-data
-            // this argument we passed into the push() function is essentially a JSON object
-            function saveToFirebase(playerName)
-            {
-                bhgPingPongLadderDB.push({
-                    name: playerName
-                });
-            }
-
-
-
-            function refreshUI(list)
-            {
-                var lis = '';
-                for(var i=0; i<list.length; i++)
-                {
-                    lis += '<li data-key="' + list[i].key + '">' + list[i].name + '</li>';
-                };
-                document.getElementById('currentPlayerList').innerHTML = lis;
-            }
 
             function genLinks(key, playerName)
             {
-
+                var links = '';
+                links += '<a href="javascript:edit(\'' + key + '\',\'' + playerName + '\')">Edit</a> | ';
+                links += '<a href="javascript:del(\'' + key + '\',\'' + playerName + '\')">Delete</a>';
+                return links;
             };
 
             function edit(key, playerName)
@@ -154,19 +154,24 @@
                 var playerNamePrompt = prompt("Update the playerName", playerName);
                 if(playerNamePrompt && playerNamePrompt.length > 0)
                 {
-                    
+
                 }
             };
 
             function del(key, playerName)
             {
+                var response = confirm("Are you certain about wiping off \"" + playerName + "\" from this list?");
+                if (response == true)
+                {
+                    // firebase JavaScript api to remove data
+                    // https://firebase.google.com/docs/reference/js/firebase.database.Reference#remove
 
+                    // stack overflow post
+                    // https://stackoverflow.com/questions/26537720/how-to-delete-remove-nodes-on-firebase
+                    playerDBref.child(key).remove();
+                }
             };
 
-            function buildEndPoint (key)
-            {
-
-            };
 
             // tutorials used: 
             // http://thejackalofjavascript.com/getting-started-with-firebase/
@@ -210,5 +215,110 @@
             });
 */
         </script>
+        </div>
+
+        <div id="History" class="tabcontent">
+            <p>Will display the current History Page</p>
+
+
+                <!-- 
+                    th      defines a header cell in a table
+                    tr      table row 
+                    td      defines a table cell in a table
+                
+                    <table border="0">
+                    turns off borders in a table
+                -->
+
+
+            <input type='text' id='newMatchResultDate'  placeholder='Enter Date'>
+            <br>
+            <input type='text' id='newMatchPlayerA'  placeholder='PlayerA Name ...'>
+            <input type='text' id='newMatchScoreA'  placeholder='PlayerA Score ...'>
+            <br>
+            <input type='text' id='newMatchPlayerB'  placeholder='PlayerB Name ...'>
+            <input type='text' id='newMatchScoreB'  placeholder='PlayerB Score...'>
+            <br>
+            <input type='text' id='newMatchWinner'  placeholder='PlayerA/PlayerB'>
+
+
+
+            <button type="button" onclick="addTodaysDate()">Add Today's Date</button>
+
+            <button type="button" onclick="addNewMatchResult()">Add New MatchResult</button>
+
+            <table border="0">
+                <tr>
+                    <td colspan="3" bgcolor="#dddddd">Firstname</th>
+                </tr>
+                <tr>
+                    <td>Jill</td>
+                    <td>Jill</td>
+                    <td>Jill</td>
+                </tr>
+                <tr>
+                    <td>Eve</td>
+ 
+                </tr>
+                <tr>
+                    <th colspan="3" bgcolor="#dddddd">12/2011</th>
+                </tr>
+
+            </table>
+
+            <br>
+            <h4>Current Players</h4>
+            <ol id="matchHistoryList"></ol>
+
+        </div>
+        <script>
+            // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
+
+            var playerMatchesDBref = bhgPingPongLadderDB.ref("matches");
+
+
+            playerMatchesDBref.on("value", function (snapshot) {
+                var data = snapshot.val();
+                console.log(snapshot.val());
+                var message = data.text;
+                if (message != undefined)
+                {
+                    messageResults.value += '\n' + message;
+                }
+
+                console.log(message);
+
+                var list = [];
+                for (var key in data)
+                {
+                    if(data.hasOwnProperty(key))
+                    {                        
+                        var matchHistory = data[key];
+                        if(matchHistory != undefined)
+                        {
+                            var date = matchHistory.date;
+                            var playerA = matchHistory.playerA;
+                            var scoreA = matchHistory.scoreA;
+                            var playerB = matchHistory.playerB;
+                            var scoreB = matchHistory.scoreB;
+                            var matchWinner = matchHistory.matchWinner;
+                        }
+
+                        if(name.trim().length > 0)
+                        {
+                            list.push({date: date, playerA: playerA, scoreA: scoreA, 
+                                                    playerB: playerB, scoreB: scoreB,
+                                                    matchWinner: machWinner, key: key})
+                        }
+                    }
+                }
+
+                refreshMatchHistoryUI(list);
+            });
+
+
+        </script>
+
+        
     </body>
 </html>
