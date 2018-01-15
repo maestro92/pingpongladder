@@ -32,6 +32,9 @@
         </div>
 
         <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+
+        <!-- using a cdn hosted jqeury version -->
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>     
     	<script>
     	  // Initialize Firebase
 
@@ -54,36 +57,39 @@
             // just ignore those. 
     	</script>
         <script type="text/javascript" src="ladder.js"></script>
+        <script type="text/javascript" src="match_history.js"></script>
     </head>
 
 
     <body>
     
         <div id="Ranking" class="tabcontent">
-            <p>Current Top 10 </p>
             <br>
-        <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
 
         <!-- we register the savedata here with the onclick function -->
-        <button type="button" onclick="addNewPlayer()">Add New Player</button>
+
         
         <!-- h1 h2 ... h6 are different HTML headings -->
         <!-- https://www.w3schools.com/tags/tag_hn.asp -->
         <h2>Current Players</h4>
-        <ol id="currentPlayerList"></ol>
+
+            <br>
+        <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
+        <button type="button" onclick="addNewPlayer()">Add New Player</button>
 
         <table class=playerRanking id="currentPlayerList_Table" class="display" width="100%"></table>
 
 
 
-        <a type="button" onclick="showFullPlayerListPage()">See Full List Here</a>
+    <!--    <a type="button" onclick="showFullPlayerListPage()">See Full List Here</a>  -->
 
         <!-- ol defines and ordered list (just google it)-->
 
         <br><br><br>
         <hr>
+            <!-- 
         <h2>Results</h2>
-        <textarea rows="10" cols="50" id="results"></textarea>
+   <textarea rows="10" cols="50" id="results"></textarea> -->
         <script>
             // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
 
@@ -146,7 +152,7 @@
                     }
                 }
 
-                
+
                 refreshPlayerUI(list);
             });
 
@@ -242,8 +248,11 @@
                 -->
 
 
-            <input type='text' id='newMatchResultDate'  placeholder='Enter Date'>
+            <input type='text' id='newMatchResultDate' size=35 placeholder='Enter Date (YYYY/MM/DD)'>
             <br>
+            <button type="button" onclick="addTodaysDate()">Add Today's Date</button>         
+            <br>
+
             <input type='text' id='newMatchPlayerA'  placeholder='PlayerA Name ...'>
             <input type='text' id='newMatchScoreA'  placeholder='PlayerA Score ...'>
             <br>
@@ -254,8 +263,6 @@
 
 
 
-            <button type="button" onclick="addTodaysDate()">Add Today's Date</button>
-            <br>
             <button type="button" onclick="addNewMatchResult()">Add New MatchResult</button>
             <br>
             <label id="errorMessageLabel"></label>
@@ -280,9 +287,16 @@
 
             </table>
 
+
+
             <br>
             <h4>Current Players</h4>
             <ol id="matchHistoryList"></ol>
+
+
+
+            <table class = matchHistoryTable id="matchHistoryList_Table" class="display" width="100%"></table>
+
 
         </div>
         <script>
@@ -294,40 +308,47 @@
             playerMatchesDBref.on("value", function (snapshot) {
                 var data = snapshot.val();
                 console.log(snapshot.val());
-                var message = data.text;
-                if (message != undefined)
+                if(snapshot.val() != null)
                 {
-                    messageResults.value += '\n' + message;
-                }
-
-                console.log(message);
-
-                var list = [];
-                for (var key in data)
-                {
-                    if(data.hasOwnProperty(key))
-                    {         
-                        var matchHistory = data[key];
-                        if(matchHistory != undefined)
-                        {
-                            var date = matchHistory.date;
-                            var playerA = matchHistory.playerA;
-                            var scoreA = matchHistory.scoreA;
-                            var playerB = matchHistory.playerB;
-                            var scoreB = matchHistory.scoreB;
-                            var winner = matchHistory.winner;
-
-                            list.push({date: date, playerA: playerA, scoreA: scoreA, 
-                                                    playerB: playerB, scoreB: scoreB,
-                                                    winner: winner, key: key})
-                        }
-
-
-                        
+                    var message = data.text;
+                    if (message != undefined)
+                    {
+                        messageResults.value += '\n' + message;
                     }
+
+                    console.log(message);
+
+                    var list = [];
+                    myCurMatchHistoryList = [];
+
+                    for (var key in data)
+                    {
+                        if(data.hasOwnProperty(key))
+                        {         
+                            var matchHistory = data[key];
+                            if(matchHistory != undefined)
+                            {
+                                var date = matchHistory.date;
+                                var playerA = matchHistory.playerA;
+                                var scoreA = matchHistory.scoreA;
+                                var playerB = matchHistory.playerB;
+                                var scoreB = matchHistory.scoreB;
+                                var winner = matchHistory.winner;
+
+
+                                var matchHistoryObject = {date: date, playerA: playerA, scoreA: scoreA, 
+                                                        playerB: playerB, scoreB: scoreB,
+                                                        winner: winner, key: key};
+
+                                list.push(matchHistoryObject)
+                                myCurMatchHistoryList.push(matchHistoryObject);
+                            }
+                        }
+                    }
+
+                    refreshMatchHistoryUI(myCurMatchHistoryList);
                 }
 
-                refreshMatchHistoryUI(list);
             });
 
 

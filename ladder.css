@@ -122,8 +122,9 @@ table.playerRanking.tr:nth-child(even) {
 }
 
 
-table.matchHistory {
-
+.matchHistoryTable {
+    font-family: arial, sans-serif;
+    border-collapse;
 }
 
 

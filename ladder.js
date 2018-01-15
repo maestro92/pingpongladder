@@ -3,6 +3,7 @@
 // edit user name, has to change all occurences in match history as well
 
 myCurPlayerList = [];
+myCurMatchHistoryList = [];
 
 RANKING_COL_WIDTH = 50;
 NAME_COL_WIDTH = 175;
@@ -126,10 +127,20 @@ function saveMatchHistoryToFirebase(date, playerNameA, scoreA, playerNameB, scor
 }
 
 
+function GetElementById(id)
+{
+    var myTableDiv = document.getElementById(id);
+    return myTableDiv;
+
+    $(document).ready(function(){
+
+    });
+//        var myTableDiv = $('#currentPlayerList_Table')[0];  
+}
+
+
 function refreshPlayerUI(list)
 {
-    var lis = '';
-
     // sortList
     list.sort(function(a, b)
     {
@@ -146,7 +157,9 @@ function refreshPlayerUI(list)
     */
 
     // https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversing_an_HTML_table_with_JavaScript_and_DOM_Interfaces
-    var myTableDiv = document.getElementById("currentPlayerList_Table");
+    // var myTableDiv = document.getElementById("currentPlayerList_Table");
+    // $('#contents')  returns a jQuery Object
+    var myTableDiv = GetElementById('currentPlayerList_Table');  
     myTableDiv.innerHTML = "";
 
     myTableDiv.setAttribute('class', 'playerRanking');
@@ -165,40 +178,50 @@ function refreshPlayerUI(list)
     buildPlayerRankingHeaderRow(tableBody);
 
 
-    for(var i=0; i<myCurPlayerList.length; i++)
+    for(var i=0; i<list.length; i++)
     {
-        var playerObject = myCurPlayerList[i];
+        var playerObject = list[i];
 
         var tr = document.createElement('TR');
         tr.setAttribute('class', 'playerRanking_tr');
         tableBody.appendChild(tr);
 
         // cell 1
-        var td = document.createElement('TD');
-        td.setAttribute('class', 'playerRanking_td');
+        var td = getOneCellForPlayerRankingTable();
         td.width = RANKING_COL_WIDTH;
         td.appendChild(document.createTextNode(i));
         tr.appendChild(td);
 
         // cell 1
-        var td = document.createElement('TD');
-        td.setAttribute('class', 'playerRanking_td');
+        var td = getOneCellForPlayerRankingTable();
         td.width = RANKING_COL_WIDTH;
-        td.appendChild(document.createTextNode('^'));
+        if(i %2 == 0)
+        {
+            td.style.color = "#00ff00";
+            td.appendChild(document.createTextNode('^'));
+        }
+        else if (i%3 == 0)
+        {
+            td.appendChild(document.createTextNode(''));
+        }
+        else
+        {
+            td.style.color = "#ff0000";
+            td.appendChild(document.createTextNode('v'));            
+        }
+
         tr.appendChild(td);
 
         // cell 2
-        var td = document.createElement('TD');
-        td.setAttribute('class', 'playerRanking_td');
+        var td = getOneCellForPlayerRankingTable();
         td.width = NAME_COL_WIDTH;
-        td.appendChild(document.createTextNode(myCurPlayerList[i].name));
+        td.appendChild(document.createTextNode(list[i].name));
         tr.appendChild(td);
 
         // cell 3
-        var td = document.createElement('TD');
-        td.setAttribute('class', 'playerRanking_td');
+        var td = getOneCellForPlayerRankingTable();
         td.width = RATING_COL_WIDTH;
-        td.appendChild(document.createTextNode( parseInt(myCurPlayerList[i].eloRating)));
+        td.appendChild(document.createTextNode( parseInt(list[i].eloRating)));
         tr.appendChild(td);
 
         td = buildEditAndDelLinksCell(playerObject);
@@ -206,9 +229,6 @@ function refreshPlayerUI(list)
         tr.appendChild(td);
 
     }
-
-
-
 
     myTableDiv.appendChild(table);
     console.log("things are here");
@@ -225,14 +245,20 @@ function buildPlayerRankingHeaderRow(tableBody)
 
     for (var i=0; i<5; i++)
     {
-        var td = document.createElement('TD');
-        td.setAttribute('class', 'playerRanking_th');
+        var td = getOneCellForPlayerRankingTable();
         td.width = RANKING_COL_WIDTH;
         td.appendChild(document.createTextNode(INDEX_TO_COL_HEADER_MAPPING[i]));
         tr.appendChild(td);
     }
 }
 
+
+function getOneCellForPlayerRankingTable()
+{
+    var td = document.createElement('TD');
+    td.setAttribute('class', 'playerRanking_td');
+    return td;
+}
 
 function buildEditAndDelLinksCell(playerObject)
 {
@@ -383,127 +409,8 @@ function checkPlayersInList(playerNameList)
     return returnedPlayerList;
 }
 
-function addNewMatchResult()
-{
-    valid = true;
-    var nmhDate = document.getElementById('newMatchResultDate');
-    var nmhPlayerA = document.getElementById('newMatchPlayerA');
-    var nmhScoreA = document.getElementById('newMatchScoreA');
-    var nmhPlayerB = document.getElementById('newMatchPlayerB');
-    var nmhScoreB = document.getElementById('newMatchScoreB');
-    var nmhWinner = document.getElementById('newMatchWinner');
 
-
-    var date = nmhDate.value.trim();
-    var playerA = nmhPlayerA.value.trim();
-    var scoreA = nmhScoreA.value.trim();
-    var playerB = nmhPlayerB.value.trim();
-    var scoreB = nmhScoreB.value.trim();
-    var winner = nmhWinner.value.trim();
-        
-    var tempList = [];
-    tempList.push(playerA);
-    tempList.push(playerB);
-
-    var errorMsg = "";
-
-    if(playerA == playerB)
-    {
-        errorMsg = "can't have the same players against each other";
-        valid = false;
-    }
-
-
-    // check if playerA and playerB exists
-    if(valid == true)
-    {
-        var undefinedPlayerList = checkPlayersInList(tempList);
-        console.log("undefinedPlayerList.length " + undefinedPlayerList.length);
-        if(undefinedPlayerList.length > 0)
-        {
-            var str = "";
-
-            i=0;
-            for(i=0; i<undefinedPlayerList.length; i++)
-            {
-                var p = undefinedPlayerList[i];
-                if(i==0)
-                {
-                    str += p;
-                }
-                else
-                {
-                    str += ", " + p;
-                }
-            }
-
-            valid = false;
-            errorMsg = "couldn't find player '" + str + "'' in our database";
-        }
-    }
-
-    if(valid == true) 
-    {
-        if(winner != playerA && winner != playerB)
-        {
-            errorMsg = "invalid winnder";    
-            valid = false;
-        }
-    }
-
-    // check the numbers of valid
-    // check if date is valid
-
-
-    if(valid == true)
-    {
-        saveMatchHistoryToFirebase(date, playerA, scoreA, playerB, scoreB, winner);   
-        nmhDate.value = '';
-        nmhPlayerA.value = '';
-        nmhScoreA.value = '';
-        nmhPlayerB.value = '';
-        nmhScoreB.value = '';
-        nmhWinner.value = '';     
-    }
-    else
-    {
-        console.log("Not saving to db, invalid");
-    }
-
-
-    if(valid == true)
-    {
-        errorMsg = "<span style=\"color:green\">" + " added " + "</span>";
-        var label = document.getElementById('errorMessageLabel').innerHTML = errorMsg;
-    }
-    else
-    {
-        errorMsg = "<span style=\"color:red\">" + errorMsg + "</span>";
-        var label = document.getElementById('errorMessageLabel').innerHTML = errorMsg;
-    }
-
-    playerAObject = findPlayerObject(playerA);
-    playerBObject = findPlayerObject(playerB);
-
-    console.log(playerAObject);
-    console.log(playerBObject);
-
-    var winnerIsA = false;
-    if(winner == playerA)
-    {
-        winnerIsA = true;
-    }
-
-    updateELO(playerAObject, playerBObject, winnerIsA);
-}
-
-
-function addTodaysDate()
-{
-    console.log("add Today's Date");
-}
-
-
+/*
 function refreshMatchHistoryUI(list)
 {
     var lis = '';
@@ -516,7 +423,84 @@ function refreshMatchHistoryUI(list)
 
     // sortList
     document.getElementById('matchHistoryList').innerHTML = lis;
+
+
+
+
+    var myTableDiv = GetElementById('matchHistoryList_Table');  
+    myTableDiv.innerHTML = "";
+    myTableDiv.setAttribute('class', 'playerRanking');
+
+    var table = document.createElement('TABLE');
+    table.border='0';
+
+    var tableBody = document.createElement('TBODY');
+    table.appendChild(tableBody);
+
+
+    var tr = document.createElement('TR');
+    tr.setAttribute('class', 'playerRanking_tr');
+    tableBody.appendChild(tr);
+
+    buildPlayerRankingHeaderRow(tableBody);
+
+
+    for(var i=0; i<myCurPlayerList.length; i++)
+    {
+        var playerObject = myCurPlayerList[i];
+
+        var tr = document.createElement('TR');
+        tr.setAttribute('class', 'playerRanking_tr');
+        tableBody.appendChild(tr);
+
+        // cell 1
+        var td = getOneCellForPlayerRankingTable();
+        td.width = RANKING_COL_WIDTH;
+        td.appendChild(document.createTextNode(i));
+        tr.appendChild(td);
+
+        // cell 1
+        var td = getOneCellForPlayerRankingTable();
+        td.width = RANKING_COL_WIDTH;
+        if(i %2 == 0)
+        {
+            td.style.color = "#00ff00";
+            td.appendChild(document.createTextNode('^'));
+        }
+        else if (i%3 == 0)
+        {
+            td.appendChild(document.createTextNode(''));
+        }
+        else
+        {
+            td.style.color = "#ff0000";
+            td.appendChild(document.createTextNode('v'));            
+        }
+
+        tr.appendChild(td);
+
+        // cell 2
+        var td = getOneCellForPlayerRankingTable();
+        td.width = NAME_COL_WIDTH;
+        td.appendChild(document.createTextNode(myCurPlayerList[i].name));
+        tr.appendChild(td);
+
+        // cell 3
+        var td = getOneCellForPlayerRankingTable();
+        td.width = RATING_COL_WIDTH;
+        td.appendChild(document.createTextNode( parseInt(myCurPlayerList[i].eloRating)));
+        tr.appendChild(td);
+
+        td = buildEditAndDelLinksCell(playerObject);
+
+        tr.appendChild(td);
+
+    }
+
+    myTableDiv.appendChild(table);
+    console.log("things are here");
 }
+*/
 
 
 // https://gamedev.stackexchange.com/questions/55441/player-ranking-using-elo-with-more-than-two-players
@@ -539,11 +523,7 @@ function updateELO(playerA, playerB, winnerIsA)
         playerB.eloRating = rb + 32 * (1 - expectedScoreB);
     }
 
-//    playerA.eloRating = playerA.eloRating.toFixed(2);
-//    playerB.eloRating = playerB.eloRating.toFixed(2);
-
     console.log(playerA.eloRating + " " + playerB.eloRating);
-
 
     playerDBref.child(playerA.key).update(
         {eloRating: playerA.eloRating}
@@ -552,7 +532,6 @@ function updateELO(playerA, playerB, winnerIsA)
     playerDBref.child(playerB.key).update(
         {eloRating: playerB.eloRating}
     );
-
 }
 
 
