@@ -60,7 +60,7 @@
     <body>
     
         <div id="Ranking" class="tabcontent">
-            <p>Will display the current Ranking Page </p>
+            <p>Current Top 10 </p>
             <br>
         <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
 
@@ -69,8 +69,14 @@
         
         <!-- h1 h2 ... h6 are different HTML headings -->
         <!-- https://www.w3schools.com/tags/tag_hn.asp -->
-        <h4>Current Players</h4>
+        <h2>Current Players</h4>
         <ol id="currentPlayerList"></ol>
+
+        <table class=playerRanking id="currentPlayerList_Table" class="display" width="100%"></table>
+
+
+
+        <a type="button" onclick="showFullPlayerListPage()">See Full List Here</a>
 
         <!-- ol defines and ordered list (just google it)-->
 
@@ -120,6 +126,8 @@
                 console.log(message);
 
                 var list = [];
+                myCurPlayerList = [];
+
                 for (var key in data)
                 {
                     if(data.hasOwnProperty(key))
@@ -131,11 +139,14 @@
 
                         if(name.trim().length > 0)
                         {
-                            list.push({name: name, eloRating: eloRating, key: key})
+                            var playerObject = {name: name, eloRating: eloRating, key:key};
+                            list.push(playerObject);
+                            myCurPlayerList.push(playerObject);
                         }
                     }
                 }
 
+                
                 refreshPlayerUI(list);
             });
 
@@ -244,8 +255,11 @@
 
 
             <button type="button" onclick="addTodaysDate()">Add Today's Date</button>
-
+            <br>
             <button type="button" onclick="addNewMatchResult()">Add New MatchResult</button>
+            <br>
+            <label id="errorMessageLabel"></label>
+
 
             <table border="0">
                 <tr>
@@ -292,7 +306,7 @@
                 for (var key in data)
                 {
                     if(data.hasOwnProperty(key))
-                    {                        
+                    {         
                         var matchHistory = data[key];
                         if(matchHistory != undefined)
                         {
@@ -301,15 +315,15 @@
                             var scoreA = matchHistory.scoreA;
                             var playerB = matchHistory.playerB;
                             var scoreB = matchHistory.scoreB;
-                            var matchWinner = matchHistory.matchWinner;
-                        }
+                            var winner = matchHistory.winner;
 
-                        if(name.trim().length > 0)
-                        {
                             list.push({date: date, playerA: playerA, scoreA: scoreA, 
                                                     playerB: playerB, scoreB: scoreB,
-                                                    matchWinner: machWinner, key: key})
+                                                    winner: winner, key: key})
                         }
+
+
+                        
                     }
                 }
 

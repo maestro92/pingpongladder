@@ -59,7 +59,7 @@ h1,h3{
     display: none;
     padding: 6px 12px;
 
-
+    background-color: #ffffff;
     border: 1px solid #ccc;
     border-top: none;
     animation: fadeEffect 1s;
@@ -78,13 +78,52 @@ table {
 
 }
 
+/*
 td, th {
+    border: none;
+    text-align: center;
+    padding: 8px;
+}
+*/
+
+/* https://stackoverflow.com/questions/7992198/html-how-to-make-2-tables-with-different-css */
+table.playerRanking {
+    font-family: arial, sans-serif;
+    border-collapse;
+}
+
+/*
+table.playerRanking_td, table.playerRanking_th {
     border: 1px solid #dddddd;
     text-align: center;
+    padding: 8px;
+}
+*/
+
+.playerRanking_td {
+    border: none;
+    text-align: left;
+    padding: 8px;
+}
+
+
+.playerRanking_th {
+    border: none;
+    text-align: left;
+    font-weight: bold;
     padding: 8px;
 }
 
 
 
+
+table.playerRanking.tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+
+table.matchHistory {
+
+}
 
 
