@@ -235,8 +235,6 @@
         </div>
 
         <div id="History" class="tabcontent">
-            <p>Will display the current History Page</p>
-
 
                 <!-- 
                     th      defines a header cell in a table
@@ -247,6 +245,13 @@
                     turns off borders in a table
                 -->
 
+
+
+
+
+            <br>
+            <h2>Match History</h2>
+            <ol id="matchHistoryList"></ol>
 
             <input type='text' id='newMatchResultDate' size=35 placeholder='Enter Date (YYYY/MM/DD)'>
             <br>
@@ -261,37 +266,12 @@
             <br>
             <input type='text' id='newMatchWinner'  placeholder='PlayerA/PlayerB'>
 
-
+            <br>
 
             <button type="button" onclick="addNewMatchResult()">Add New MatchResult</button>
             <br>
             <label id="errorMessageLabel"></label>
 
-
-            <table border="0">
-                <tr>
-                    <td colspan="3" bgcolor="#dddddd">Firstname</th>
-                </tr>
-                <tr>
-                    <td>Jill</td>
-                    <td>Jill</td>
-                    <td>Jill</td>
-                </tr>
-                <tr>
-                    <td>Eve</td>
- 
-                </tr>
-                <tr>
-                    <th colspan="3" bgcolor="#dddddd">12/2011</th>
-                </tr>
-
-            </table>
-
-
-
-            <br>
-            <h4>Current Players</h4>
-            <ol id="matchHistoryList"></ol>
 
 
 

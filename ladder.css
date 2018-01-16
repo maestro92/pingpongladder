@@ -87,7 +87,7 @@ td, th {
 */
 
 /* https://stackoverflow.com/questions/7992198/html-how-to-make-2-tables-with-different-css */
-table.playerRanking {
+.playerRankingTable {
     font-family: arial, sans-serif;
     border-collapse;
 }
@@ -127,4 +127,96 @@ table.playerRanking.tr:nth-child(even) {
     border-collapse;
 }
 
+.matchHistoryTable_th {
+    background-color: #dddddd;
+    padding: 8px;
+    font-family: arial, sans-serif;
+    border-collapse;
+    font-weight: bold;
+    text-align: center;
+    color: blue;
+}
 
+
+.matchHistoryTableLeftScore_td {
+    background-color: #ffffff;
+    font-family: arial, sans-serif;
+
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+
+    text-align: right;
+    color: black;
+}
+
+
+.matchHistoryTableMiddleDash_td {
+    background-color: #ffffff;
+    font-family: arial, sans-serif;
+
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+
+    text-align: center;
+    color: black;
+}
+
+
+.matchHistoryTableRightScore_td {
+    background-color: #ffffff;
+    font-family: arial, sans-serif;
+
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+
+    text-align: left;
+    color: black;
+}
+
+
+.matchHistoryTableLeftWinner_td {
+    background-color: #ffffff;
+    padding: 8px;
+    font-family: arial, sans-serif;
+    
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+    
+    font-weight: bold; 
+    text-align: right;
+    color: blue;
+}
+
+
+.matchHistoryTableLeftLoser_td {
+    background-color: #ffffff;
+    padding: 8px;
+    font-family: arial, sans-serif;
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+    text-align: right;
+    color: gray;
+}
+
+.matchHistoryTableRightWinner_td {
+    background-color: #ffffff;
+    padding: 8px;
+    font-family: arial, sans-serif;
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold; 
+    text-align: left;
+    color: blue
+}
+
+.matchHistoryTableRightLoser_td {
+    background-color: #ffffff;
+    padding: 8px;
+    font-family: arial, sans-serif;
+    border-collapse;
+    border-bottom: 1px solid #ccc;
+    
+/*    font-weight: bold; */
+    text-align: left;
+    color: gray;
+}

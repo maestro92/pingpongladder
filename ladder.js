@@ -162,7 +162,7 @@ function refreshPlayerUI(list)
     var myTableDiv = GetElementById('currentPlayerList_Table');  
     myTableDiv.innerHTML = "";
 
-    myTableDiv.setAttribute('class', 'playerRanking');
+    myTableDiv.setAttribute('class', 'playerRankingTable');
 
     var table = document.createElement('TABLE');
     table.border='0';
@@ -309,16 +309,6 @@ function getTrimmedPlayerName(rawString)
 
 function findPlayerObject(playerName)
 {
-    console.log("cur list is  " + myCurPlayerList);
-    for(i = 0; i< myCurPlayerList.length; i++)
-    {
-        var player = myCurPlayerList[i];
-
-        console.log(player["name"]);
-        console.log(player.name + " " + player.eloRating);
-    }
-
-
     for(i = 0; i< myCurPlayerList.length; i++)
     {
         var player = myCurPlayerList[i];
@@ -334,14 +324,12 @@ function findPlayerObject(playerName)
 // TODO: optimizing here
 function checkPlayersInList(playerNameList)
 {
-    console.log("in here1");
     var flags = [];
     for (var player in playerNameList)
     {
         flags.push(0);
     }
     
-    console.log("in here2");
 
     playerDBref.once("value", function (snapshot) {
         var data = snapshot.val();
@@ -360,9 +348,6 @@ function checkPlayersInList(playerNameList)
                 var playerData = data[key];
 
                 var name = playerData.name;
-
-                console.log("name " + name);
-
 
                 for(i=0; i<playerNameList.length; i++)
                 {

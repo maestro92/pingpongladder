@@ -1,8 +1,16 @@
 
 NUM_CHARS_IN_DATE = 10;
 
-NUM_MATCHHISTORY_COL = 3
+NUM_MATCHHISTORY_COL = 5
         
+MATCH_HISTORY_SCORE_COL_WIDTH = 200;
+
+PLAYER_NAME_COL_WIDTH = 400;
+
+SCORE_COL_WIDTH = 60;
+SCORE_MIDDLE_DASH_COL_WIDTH = 3;
+
+
 tempDateTime = 0;
 
 function addTodaysDate()
@@ -148,6 +156,8 @@ function addNewMatchResult()
     tempList.push(playerA);
     tempList.push(playerB);
 
+
+
     var errorMsg = "";
 
     if(valid == true)
@@ -233,6 +243,26 @@ function addNewMatchResult()
         }
     }
 
+    if(valid == true)
+    {
+        if(winner == playerA)
+        {
+            if(scoreA < scoreB)
+            {
+                errorMsg = "the winner has the lower score?";    
+                valid = false;
+            }
+        }
+        else
+        {
+            if(scoreB < scoreA)
+            {
+                errorMsg = "the winner has the lower score?";    
+                valid = false;
+            }       
+        }
+    }
+
     // check the numbers of valid
     // check if date is valid
 
@@ -289,22 +319,9 @@ function printMatchHistory(matchHistoryObject)
 
 function refreshMatchHistoryUI(list)
 {
-    
-    var lis = '';
-
-    // <li> tag is used in ordered lists (<ol>), unordered lists(<ul>), and in menu lists (<menu>)
-    for(var i=0; i<list.length; i++)
-    {
-        lis += '<li data-key="' + list[i].key + '">' + list[i].playerA + '  ' + list[i].scoreA + " : " + list[i].scoreB + '  ' + list[i].playerB + ' ' + list[i].winner + ' </li>';
-    };
-    
-    // sortList
-    document.getElementById('matchHistoryList').innerHTML = lis;
-    
-
     var myTableDiv = GetElementById('matchHistoryList_Table');  
     myTableDiv.innerHTML = "";
-    myTableDiv.setAttribute('class', 'playerRanking');
+    myTableDiv.setAttribute('class', 'matchHistoryTable');
 
     var table = document.createElement('TABLE');
     table.border='0';
@@ -314,7 +331,6 @@ function refreshMatchHistoryUI(list)
 
 
     var tr = document.createElement('TR');
-    tr.setAttribute('class', 'playerRanking_tr');
     tableBody.appendChild(tr);
 
 
@@ -329,8 +345,6 @@ function refreshMatchHistoryUI(list)
 
         var date = matchHistoryObject.date;
 
-        console.log(date);
-
         if(date in matchHistoryDictionaryByDate)
         {
             matchHistoryDictionaryByDate[date].push(matchHistoryObject);
@@ -342,90 +356,177 @@ function refreshMatchHistoryUI(list)
         }
     }   
 
+    console.log(matchHistoryDictionaryByDate);
+
 
     for (var key in matchHistoryDictionaryByDate)
     {
         var list = matchHistoryDictionaryByDate[key];
-
-        for(var mh in list)
+        console.log(list.length);
+        for(var i=0; i<list.length; i++)
         {
-            console.log(mh.winner);
+            printMatchHistory(list[i]);
         }
     }
 
 
-/*
-    for(var i=0; i<myCurMatchHistoryList.length; i++)
+    listSortedByDate = []
+    for (var key in matchHistoryDictionaryByDate)
     {
-
-
-        buildMatchHistoryHeaderRow(tableBody, matchHistoryObject);
-
-        var tr = document.createElement('TR');
-        tr.setAttribute('class', 'playerRanking_tr');
-        tableBody.appendChild(tr);
-
-        // cell 1
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RANKING_COL_WIDTH;
-        td.appendChild(document.createTextNode(i));
-        tr.appendChild(td);
-
-        // cell 1
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RANKING_COL_WIDTH;
-        if(i %2 == 0)
-        {
-            td.style.color = "#00ff00";
-            td.appendChild(document.createTextNode('^'));
-        }
-        else if (i%3 == 0)
-        {
-            td.appendChild(document.createTextNode(''));
-        }
-        else
-        {
-            td.style.color = "#ff0000";
-            td.appendChild(document.createTextNode('v'));            
-        }
-
-        tr.appendChild(td);
-
-        // cell 2
-        var td = getOneCellForPlayerRankingTable();
-        td.width = NAME_COL_WIDTH;
-        td.appendChild(document.createTextNode(myCurPlayerList[i].name));
-        tr.appendChild(td);
-
-        // cell 3
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RATING_COL_WIDTH;
-        td.appendChild(document.createTextNode( parseInt(myCurPlayerList[i].eloRating)));
-        tr.appendChild(td);
-
-        td = buildEditAndDelLinksCell(playerObject);
-
-        tr.appendChild(td);
-
+        listSortedByDate.push([key, matchHistoryDictionaryByDate[key]]);
     }
 
-    myTableDiv.appendChild(table);
-    console.log("things are here");
-    */
+    listSortedByDate.sort(function(a, b)
+    {
+        console.log(a);
+        console.log(b);
+
+        var dateA = new Date(a[0]);
+        var dateB = new Date(b[0]);
+     
+        var yearDiff = dateB.getFullYear() - dateA.getFullYear();
+        if(yearDiff !=0 )
+        {
+            return yearDiff;
+        }  
+
+        var monthDiff = dateB.getMonth() - dateA.getMonth();
+        if(monthDiff != 0 )
+        {
+            return monthDiff;
+        }
+
+        var dayDiff = dateB.getDate() - dateA.getDate();
+        if(dayDiff != 0)
+        {
+            return dayDiff;
+        }
+
+        return 1;
+
+    })
+
+
+
+    for(var i=0; i<listSortedByDate.length; i++)
+    {
+        var date = listSortedByDate[i][0];
+        buildDateHeaderRow(tableBody, date);
+
+        var subList = listSortedByDate[i][1];
+
+
+        for(var j=0; j<subList.length; j++)
+        {
+            buildRowForMatchHistory(tableBody, subList[j])
+        }
+    }
+
+    myTableDiv.appendChild(table);    
 }
+
 
 
 
 // folling alligulac 
 //  #   trend   Name        Rating      hyperlink
-function buildMatchHistoryHeaderRow(tableBody, matchHistoryObject)
+function buildDateHeaderRow(tableBody, date)
 {
     var tr = document.createElement('TR');
-    tr.setAttribute('class', 'playerRanking_th');
+
+    var th = document.createElement('th');
+    th.setAttribute('class', 'matchHistoryTable_th');
+    th.setAttribute('colspan', NUM_MATCHHISTORY_COL);
+    
+    th.appendChild(document.createTextNode(date));
+    tr.appendChild(th);
+    tableBody.appendChild(tr);
+}
+
+
+function buildRowForMatchHistory(tableBody, matchHistoryObject)
+{
+
+    var tr = document.createElement('TR');
     tableBody.appendChild(tr);
 
-    var td = getOneCellForPlayerRankingTable();
-    td.setAttribute('colspan', NUM_MATCHHISTORY_COL);
-    td.appendChild(document.createTextNode(matchHistoryObject.date));
+    AIsWinner = matchHistoryObject.playerA == matchHistoryObject.winner;
+
+    var td = getOneCellForLeftPlayer(matchHistoryObject.playerA, AIsWinner);
+    td.width = PLAYER_NAME_COL_WIDTH;
     tr.appendChild(td);
+
+    var td = getOneCellForLeftScore(matchHistoryObject.scoreA);
+    td.width = SCORE_COL_WIDTH;
+    tr.appendChild(td);
+
+    var td = getOneCellForMiddleDash();
+    td.width = SCORE_MIDDLE_DASH_COL_WIDTH;
+    tr.appendChild(td);
+
+    var td = getOneCellForRightScore(matchHistoryObject.scoreB);
+    td.width = SCORE_COL_WIDTH;
+    tr.appendChild(td);
+
+
+    var td = getOneCellForRightPlayer(matchHistoryObject.playerB, AIsWinner == false);
+    td.width = PLAYER_NAME_COL_WIDTH;
+    tr.appendChild(td);
+}
+
+
+function getOneCellForLeftPlayer(name, isWinner)
+{
+    var td = document.createElement('TD');
+    td.appendChild(document.createTextNode(name));
+    if(isWinner)
+    {
+        td.setAttribute('class', 'matchHistoryTableLeftWinner_td');
+    }
+    else
+    {
+        td.setAttribute('class', 'matchHistoryTableLeftLoser_td');
+    }
+    return td;
+}
+
+function getOneCellForLeftScore(score)
+{
+    var td = document.createElement('TD');
+    td.setAttribute('class', 'matchHistoryTableLeftScore_td');
+    td.appendChild(document.createTextNode(score));
+    return td;
+}
+
+function getOneCellForMiddleDash()
+{
+    var td = document.createElement('TD');
+    td.setAttribute('class', 'matchHistoryTableMiddleDash_td');
+    td.appendChild(document.createTextNode("-"));
+    return td;
+}
+
+function getOneCellForRightScore(score)
+{
+    var td = document.createElement('TD');
+    td.setAttribute('class', 'matchHistoryTableRightScore_td');
+    td.appendChild(document.createTextNode(score));
+    return td;
+}
+
+
+function getOneCellForRightPlayer(name, isWinner)
+{
+    var td = document.createElement('TD');
+    td.setAttribute('class', 'matchHistoryTableRight_td');
+    td.appendChild(document.createTextNode(name));
+    if(isWinner)
+    {
+        td.setAttribute('class', 'matchHistoryTableRightWinner_td');
+    }
+    else
+    {
+        td.setAttribute('class', 'matchHistoryTableRightLoser_td');
+    }
+    return td;
 }
