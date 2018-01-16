@@ -279,20 +279,21 @@ function buildEditAndDelLinksCell(playerObject)
     var linkText = document.createTextNode("Edit");
     editNode.appendChild(linkText);
     editNode.title = "Edit";
-    editNode.href = "javascript:edit(\'' + 'playerObject.key' + '\',\'' + 'playerObject.playerName' + '\')";
+    editNode.href = 'javascript:edit(\'' + playerObject.key + '\',\'' + playerObject.name + '\')';
     td.appendChild(editNode);
 
+/*
     spacer = document.createElement('a');
     spacerNode = document.createTextNode(" | ");
     td.appendChild(spacerNode);
-
-
+    
     var delNode = document.createElement('a');
     linkText = document.createTextNode('Delete');
     delNode.appendChild(linkText);
     delNode.title = "Delete";
     delNode.href = 'javascript:del(\'' + playerObject.key + '\',\'' + playerObject.name + '\')';
     td.appendChild(delNode);
+*/
 
     spacer = document.createElement('a');
     spacerNode = document.createTextNode(" ]");

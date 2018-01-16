@@ -15,11 +15,15 @@ tempDateTime = 0;
 
 // https://stackoverflow.com/questions/23718753/javascript-to-create-a-dropdown-list-and-get-the-selected-value
 // http://jsfiddle.net/ChaseWest/AKXcF/4/
+
+
+
+
+
 function UpdatePlayerDropDownList()
 {
     var playerAOptions = document.getElementById('playerAOptions');
     var playerBOptions = document.getElementById('playerBOptions');
-
     
     while(playerAOptions.options.length > 0)
     {
@@ -29,9 +33,6 @@ function UpdatePlayerDropDownList()
     {
         playerBOptions.remove(0);
     }
-
-
-
 
     playersByNames = [];
     for(var i=0; i< myCurPlayerList.length; i++)
@@ -573,3 +574,48 @@ function getOneCellForRightPlayer(name, isWinner)
     }
     return td;
 }
+
+
+function CopyCurMatchHistoryList(curMatchHistory)
+{
+    var newMatchHistoryList = [];
+
+    for(var i=0; i<curMatchHistory.length; i++)
+    {
+        var curObj = curMatchHistory[i];
+        var newObj = {date: curObj.date, playerA: curObj.playerA, scoreA: curObj.scoreA, 
+                            playerB: curObj.playerB, scoreB: curObj.scoreB,
+                            winner: curObj.winner, key: curObj.key};
+        
+        newMatchHistoryList.push(newObj);
+    }
+
+    return newMatchHistoryList;
+}
+
+
+
+function UpdateAllMatchesHistoryThisPlayerIsInvolvedIn(list, playerName, playerNamePrompt)
+{
+    for(var i=0; i<list.length; i++)
+    {
+        var curObj = list[i];
+
+        if(curObj.playerA == playerName)
+        {
+            playerMatchesDBref.child(curObj.key).update({
+                playerA: playerNamePrompt
+            });
+        }
+
+        if(curObj.playerB == playerName)
+        {
+            playerMatchesDBref.child(curObj.key).update({
+                playerB: playerNamePrompt
+            });
+        }
+    }
+
+
+}
+

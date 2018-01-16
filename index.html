@@ -1,7 +1,3 @@
-<!-- match history -->
-
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -20,13 +16,12 @@
         <!-- how to center tab bar 
              https://stackoverflow.com/questions/43000035/how-to-center-tab-bar
         -->    
+
+
         <div class="tab-container">
         <div class="tab">
-            <!-- 
-            
-            https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Event_handlers
-            -->
-            <button class="tablinks" onclick="openRankingPage(event, 'Ranking')">Ranking</button>
+            <!-- https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Event_handlers -->
+            <button id='rankingTabBtn' class="tablinks" onclick="openRankingPage(event, 'Ranking')">Ranking</button>
             <button class="tablinks" onclick="openHistoryPage(event, 'History')">History</button>      
         </div>
         </div>
@@ -58,26 +53,33 @@
     	</script>
         <script type="text/javascript" src="ladder.js"></script>
         <script type="text/javascript" src="match_history.js"></script>
+
+
     </head>
 
 
     <body>
     
         <div id="Ranking" class="tabcontent">
-            <br>
+        <br>
 
         <!-- we register the savedata here with the onclick function -->
 
         
         <!-- h1 h2 ... h6 are different HTML headings -->
         <!-- https://www.w3schools.com/tags/tag_hn.asp -->
-        <h2>Current Players</h4>
+        <h2>New Player</h2>
 
-            <br>
-        <input type='text' id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
-        <button type="button" onclick="addNewPlayer()">Add New Player</button>
 
+        <label class=playerNameLabel> Name: </label>
+        <input type='text' size=40 id='newPlayerNameInput'  placeholder='Enter new Player Name here...'>
+        <br><br>
+        <button type="button" style="height:50px;width:200px" onclick="addNewPlayer()">Add New Player</button>
+
+        <br>
+        <h2>Current Players</h2>
         <table class=playerRanking id="currentPlayerList_Table" class="display" width="100%"></table>
+        <br>
 
 
 
@@ -154,7 +156,7 @@
             });
 
 
-
+            /*
             function genLinks(key, playerName)
             {
                 var links = '';
@@ -162,16 +164,24 @@
                 links += '<a href="javascript:del(\'' + key + '\',\'' + playerName + '\')">Delete</a>';
                 return links;
             };
+            */
 
             function edit(key, playerName)
             {
                 var playerNamePrompt = prompt("Update the playerName", playerName);
                 if(playerNamePrompt && playerNamePrompt.length > 0)
                 {
-
+                    playerDBref.child(key).update({
+                        name: playerNamePrompt
+                    });
                 }
+
+                oldList = CopyCurMatchHistoryList(myCurMatchHistoryList);
+                UpdateAllMatchesHistoryThisPlayerIsInvolvedIn(oldList, playerName, playerNamePrompt);
             };
 
+
+            /*
             function del(key, playerName)
             {
                 var response = confirm("Are you certain about wiping off \"" + playerName + "\" from this list?");
@@ -185,7 +195,7 @@
                     playerDBref.child(key).remove();
                 }
             };
-
+            */
 
             // tutorials used: 
             // http://thejackalofjavascript.com/getting-started-with-firebase/
@@ -342,4 +352,9 @@
 
         
     </body>
+
+
+    <script>
+            document.getElementById('rankingTabBtn').click();
+    </script>
 </html>
