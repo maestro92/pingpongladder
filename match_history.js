@@ -13,9 +13,73 @@ SCORE_MIDDLE_DASH_COL_WIDTH = 3;
 
 tempDateTime = 0;
 
+// https://stackoverflow.com/questions/23718753/javascript-to-create-a-dropdown-list-and-get-the-selected-value
+// http://jsfiddle.net/ChaseWest/AKXcF/4/
+function UpdatePlayerDropDownList()
+{
+    var playerAOptions = document.getElementById('playerAOptions');
+    var playerBOptions = document.getElementById('playerBOptions');
+
+    
+    while(playerAOptions.options.length > 0)
+    {
+        playerAOptions.remove(0);
+    }
+    while(playerBOptions.options.length > 0)
+    {
+        playerBOptions.remove(0);
+    }
+
+
+
+
+    playersByNames = [];
+    for(var i=0; i< myCurPlayerList.length; i++)
+    {
+        var ori = myCurPlayerList[i];
+        playerObj = {name: ori.name, eloRating: ori.eloRating, key: ori.key};
+
+        playersByNames.push(playerObj); 
+    }
+
+    playersByNames.sort(function(a, b)
+    {
+        if(a.name < b.name) return -1;
+        if(a.name > b.name) return 1;
+        return 0;
+    })
+
+
+    for(var i = 0; i<playersByNames.length; i++)
+    {
+        playerAOptions.options.add( new Option(playersByNames[i].name) );
+        playerBOptions.options.add( new Option(playersByNames[i].name) );
+    }
+
+    UpdateWinnerDropDownList()
+}
+
+
+function UpdateWinnerDropDownList()
+{
+
+    var playerAOptions = document.getElementById('playerAOptions');
+    var playerBOptions = document.getElementById('playerBOptions');
+    var winnerOptions = document.getElementById('winnerOptions');
+    while(winnerOptions.options.length > 0)
+    {
+        winnerOptions.remove(0);
+    }
+
+    winnerOptions.options.add( new Option(playerAOptions.value) );
+    if(playerAOptions.value != playerBOptions.value)
+    {
+        winnerOptions.options.add( new Option(playerBOptions.value) );
+    }
+}
+
 function addTodaysDate()
 {
-    console.log("add Today's Date");
     var d = new Date();
 
     var nmhDate = document.getElementById('newMatchResultDate');
@@ -86,11 +150,6 @@ function isValidNumber(numberString)
 
 function isValidDateString(dateString)
 {
-    console.log("Here");
-
-    console.log("dateString.length " + dateString.length);
-
-
     if(dateString.length != NUM_CHARS_IN_DATE)
     {
         return false;
@@ -139,11 +198,11 @@ function addNewMatchResult()
 {
     valid = true;
     var nmhDate = document.getElementById('newMatchResultDate');
-    var nmhPlayerA = document.getElementById('newMatchPlayerA');
+    var nmhPlayerA = document.getElementById('playerAOptions');
     var nmhScoreA = document.getElementById('newMatchScoreA');
-    var nmhPlayerB = document.getElementById('newMatchPlayerB');
+    var nmhPlayerB = document.getElementById('playerBOptions');
     var nmhScoreB = document.getElementById('newMatchScoreB');
-    var nmhWinner = document.getElementById('newMatchWinner');
+    var nmhWinner = document.getElementById('winnerOptions');
 
     var date = nmhDate.value.trim();
     var playerA = nmhPlayerA.value.trim();
@@ -155,7 +214,6 @@ function addNewMatchResult()
     var tempList = [];
     tempList.push(playerA);
     tempList.push(playerB);
-
 
 
     var errorMsg = "";
@@ -217,7 +275,7 @@ function addNewMatchResult()
     if(valid == true)
     {
         var undefinedPlayerList = checkPlayersInList(tempList);
-        console.log("undefinedPlayerList.length " + undefinedPlayerList.length);
+
         if(undefinedPlayerList.length > 0)
         {
             var str = "";
@@ -298,9 +356,6 @@ function addNewMatchResult()
         playerAObject = findPlayerObject(playerA);
         playerBObject = findPlayerObject(playerB);
 
-        console.log(playerAObject);
-        console.log(playerBObject);
-
         var winnerIsA = false;
         if(winner == playerA)
         {
@@ -348,8 +403,6 @@ function refreshMatchHistoryUI(list)
     {
         var matchHistoryObject = myCurMatchHistoryList[i];
 
-        printMatchHistory(matchHistoryObject);
-
         var date = matchHistoryObject.date;
 
         if(date in matchHistoryDictionaryByDate)
@@ -363,20 +416,6 @@ function refreshMatchHistoryUI(list)
         }
     }   
 
-    console.log(matchHistoryDictionaryByDate);
-
-
-    for (var key in matchHistoryDictionaryByDate)
-    {
-        var list = matchHistoryDictionaryByDate[key];
-        console.log(list.length);
-        for(var i=0; i<list.length; i++)
-        {
-            printMatchHistory(list[i]);
-        }
-    }
-
-
     listSortedByDate = []
     for (var key in matchHistoryDictionaryByDate)
     {
@@ -385,9 +424,6 @@ function refreshMatchHistoryUI(list)
 
     listSortedByDate.sort(function(a, b)
     {
-        console.log(a);
-        console.log(b);
-
         var dateA = new Date(a[0]);
         var dateB = new Date(b[0]);
      

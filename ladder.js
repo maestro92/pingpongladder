@@ -69,7 +69,6 @@ function isValidPlayerName()
 
 function addNewPlayer()
 {                     
-    console.log("adding New User");
     var newPlayerNameField = document.getElementById('newPlayerNameInput');
 
     var playerName = newPlayerNameField.value.trim();
@@ -231,7 +230,8 @@ function refreshPlayerUI(list)
     }
 
     myTableDiv.appendChild(table);
-    console.log("things are here");
+
+    UpdatePlayerDropDownList();
 }
 
 
@@ -333,7 +333,7 @@ function checkPlayersInList(playerNameList)
 
     playerDBref.once("value", function (snapshot) {
         var data = snapshot.val();
-        console.log(snapshot.val());
+
         var message = data.text;
         if (message != undefined)
         {
@@ -352,11 +352,9 @@ function checkPlayersInList(playerNameList)
                 for(i=0; i<playerNameList.length; i++)
                 {
                     var p = playerNameList[i];
-                    console.log("   p " + p);
 
                     if(p == name)
                     {
-                        console.log("           name is the same");
                         flags[i] = 1;
                     }
                 }
@@ -379,113 +377,17 @@ function checkPlayersInList(playerNameList)
 
     });
 
-    console.log("in here3");
     var returnedPlayerList = [];
     for(i=0; i<playerNameList.length; i++)
     {
-        console.log(flags[i]);
         if(flags[i] == 0)
         {
             returnedPlayerList.push(playerNameList[i]);
         }
     }
-            console.log("returning " + returnedPlayerList);
-                console.log("returning " + returnedPlayerList.length);
+
     return returnedPlayerList;
 }
-
-
-/*
-function refreshMatchHistoryUI(list)
-{
-    var lis = '';
-
-    // <li> tag is used in ordered lists (<ol>), unordered lists(<ul>), and in menu lists (<menu>)
-    for(var i=0; i<list.length; i++)
-    {
-        lis += '<li data-key="' + list[i].key + '">' + list[i].playerA + '  ' + list[i].scoreA + " : " + list[i].scoreB + '  ' + list[i].playerB + ' ' + list[i].winner + ' </li>';
-    };
-
-    // sortList
-    document.getElementById('matchHistoryList').innerHTML = lis;
-
-
-
-
-    var myTableDiv = GetElementById('matchHistoryList_Table');  
-    myTableDiv.innerHTML = "";
-    myTableDiv.setAttribute('class', 'playerRanking');
-
-    var table = document.createElement('TABLE');
-    table.border='0';
-
-    var tableBody = document.createElement('TBODY');
-    table.appendChild(tableBody);
-
-
-    var tr = document.createElement('TR');
-    tr.setAttribute('class', 'playerRanking_tr');
-    tableBody.appendChild(tr);
-
-    buildPlayerRankingHeaderRow(tableBody);
-
-
-    for(var i=0; i<myCurPlayerList.length; i++)
-    {
-        var playerObject = myCurPlayerList[i];
-
-        var tr = document.createElement('TR');
-        tr.setAttribute('class', 'playerRanking_tr');
-        tableBody.appendChild(tr);
-
-        // cell 1
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RANKING_COL_WIDTH;
-        td.appendChild(document.createTextNode(i));
-        tr.appendChild(td);
-
-        // cell 1
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RANKING_COL_WIDTH;
-        if(i %2 == 0)
-        {
-            td.style.color = "#00ff00";
-            td.appendChild(document.createTextNode('^'));
-        }
-        else if (i%3 == 0)
-        {
-            td.appendChild(document.createTextNode(''));
-        }
-        else
-        {
-            td.style.color = "#ff0000";
-            td.appendChild(document.createTextNode('v'));            
-        }
-
-        tr.appendChild(td);
-
-        // cell 2
-        var td = getOneCellForPlayerRankingTable();
-        td.width = NAME_COL_WIDTH;
-        td.appendChild(document.createTextNode(myCurPlayerList[i].name));
-        tr.appendChild(td);
-
-        // cell 3
-        var td = getOneCellForPlayerRankingTable();
-        td.width = RATING_COL_WIDTH;
-        td.appendChild(document.createTextNode( parseInt(myCurPlayerList[i].eloRating)));
-        tr.appendChild(td);
-
-        td = buildEditAndDelLinksCell(playerObject);
-
-        tr.appendChild(td);
-
-    }
-
-    myTableDiv.appendChild(table);
-    console.log("things are here");
-}
-*/
 
 
 // https://gamedev.stackexchange.com/questions/55441/player-ranking-using-elo-with-more-than-two-players
@@ -508,8 +410,6 @@ function updateELO(playerA, playerB, winnerIsA)
         playerB.eloRating = rb + 32 * (1 - expectedScoreB);
     }
 
-    console.log(playerA.eloRating + " " + playerB.eloRating);
-
     playerDBref.child(playerA.key).update(
         {eloRating: playerA.eloRating}
     );
@@ -521,7 +421,4 @@ function updateELO(playerA, playerB, winnerIsA)
 
 
 // http://www.mysamplecode.com/2012/04/generate-html-table-using-javascript.html
-function showFullPlayerListPage()
-{
-    console.log("Show full player List page");
-}
+

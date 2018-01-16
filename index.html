@@ -122,14 +122,11 @@
 
             playerDBref.on("value", function (snapshot) {
                 var data = snapshot.val();
-                console.log(snapshot.val());
                 var message = data.text;
                 if (message != undefined)
                 {
                     messageResults.value += '\n' + message;
                 }
-
-                console.log(message);
 
                 var list = [];
                 myCurPlayerList = [];
@@ -250,21 +247,34 @@
 
 
             <br>
-            <h2>Match History</h2>
+            <h2>New Entry</h2>
             <ol id="matchHistoryList"></ol>
 
+            <label>Date: </label>
             <input type='text' id='newMatchResultDate' size=35 placeholder='Enter Date (YYYY/MM/DD)'>
             <br>
             <button type="button" onclick="addTodaysDate()">Add Today's Date</button>         
             <br><br>
 
-            <input type='text' id='newMatchPlayerA'  placeholder='PlayerA Name ...'>
-            <input type='text' id='newMatchScoreA'  placeholder='PlayerA Score ...'>
+            <label class=playerNameLabel>PlayerA </label>
+            <select id='playerAOptions' onchange="UpdateWinnerDropDownList()" ></select>
             <br>
-            <input type='text' id='newMatchPlayerB'  placeholder='PlayerB Name ...'>
-            <input type='text' id='newMatchScoreB'  placeholder='PlayerB Score...'>
+            <label class=playerScoreLabel>Score</label>
+            <input type='text' id='newMatchScoreA'  placeholder='PlayerA Score ...'>
             <br><br>
-            <input type='text' id='newMatchWinner' size=30  placeholder='Winner? PlayerA/PlayerB'>
+
+
+            <label class=playerNameLabel> PlayerB </label>
+            <select id='playerBOptions' onchange="UpdateWinnerDropDownList()" ></select>
+            <br>
+            <label class=playerScoreLabel> Score </label>
+            <input type='text' id='newMatchScoreB'  placeholder='PlayerB Score...'>
+
+            <br><br>
+            <label class=playerWinnerLabel> Winner </label>
+            <select id='winnerOptions'></select>
+
+            <!-- <input type='text' id='newMatchWinner' size=30  placeholder='Winner? PlayerA/PlayerB'> -->
 
             <br><br>
             <button type="button" style="height:50px;width:200px" onclick="addNewMatchResult()">Add New MatchResult</button>
@@ -273,7 +283,7 @@
 
 
 
-
+            <h2>Match History</h2>
             <table class = matchHistoryTable id="matchHistoryList_Table" class="display" width="100%"></table>
 
 
@@ -283,10 +293,9 @@
 
             var playerMatchesDBref = bhgPingPongLadderDB.ref("matches");
 
-
             playerMatchesDBref.on("value", function (snapshot) {
                 var data = snapshot.val();
-                console.log(snapshot.val());
+
                 if(snapshot.val() != null)
                 {
                     var message = data.text;
@@ -294,8 +303,6 @@
                     {
                         messageResults.value += '\n' + message;
                     }
-
-                    console.log(message);
 
                     var list = [];
                     myCurMatchHistoryList = [];
