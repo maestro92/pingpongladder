@@ -16,10 +16,6 @@ tempDateTime = 0;
 // https://stackoverflow.com/questions/23718753/javascript-to-create-a-dropdown-list-and-get-the-selected-value
 // http://jsfiddle.net/ChaseWest/AKXcF/4/
 
-
-
-
-
 function UpdatePlayerDropDownList()
 {
     var playerAOptions = document.getElementById('playerAOptions');

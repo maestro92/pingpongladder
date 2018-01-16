@@ -17,7 +17,6 @@
              https://stackoverflow.com/questions/43000035/how-to-center-tab-bar
         -->    
 
-
         <div class="tab-container">
         <div class="tab">
             <!-- https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Event_handlers -->
@@ -46,7 +45,7 @@
             firebase.initializeApp(config);
 
 
-            	// Firebase permission denied
+            // Firebase permission denied
             // https://stackoverflow.com/questions/37403747/firebase-permission-denied
             // when you do this for the first time, you see see lots of "Get Started" Buttons
             // just ignore those. 
@@ -89,32 +88,14 @@
 
         <br><br><br>
         <hr>
-            <!-- 
-        <h2>Results</h2>
-   <textarea rows="10" cols="50" id="results"></textarea> -->
+        <!-- <h2>Results</h2> <textarea rows="10" cols="50" id="results"></textarea> -->
         <script>
-            // var messagesRef = new Firebase('https://pingpongladder-6f7b2.firebaseio.com'); 
-
             document.getElementById("Ranking").click();
 
             var bhgPingPongLadderDB = firebase.database(); 
             var playerDBref = bhgPingPongLadderDB.ref("players");
 
-
             var messageResults = document.getElementById('results');            
-
-            // Update results when data is added
-            /*
-            bhgPingPongLadderDB.limitToLast(10).on('child_added', function (snapshot) {
-                var data = snapshot.val();
-                console.log(snapshot.val());
-                var message = data.text;
-                if (message != undefined)
-                {
-                    messageResults.value += '\n' + message;
-                }
-            });
-            */
 
             // this will get fired on initial load as well as whenever there is a change in the data
             // https://firebase.google.com/docs/database/admin/retrieve-data
@@ -156,15 +137,6 @@
             });
 
 
-            /*
-            function genLinks(key, playerName)
-            {
-                var links = '';
-                links += '<a href="javascript:edit(\'' + key + '\',\'' + playerName + '\')">Edit</a> | ';
-                links += '<a href="javascript:del(\'' + key + '\',\'' + playerName + '\')">Delete</a>';
-                return links;
-            };
-            */
 
             function edit(key, playerName)
             {
@@ -251,10 +223,6 @@
                     <table border="0">
                     turns off borders in a table
                 -->
-
-
-
-
 
             <br>
             <h2>New Entry</h2>
