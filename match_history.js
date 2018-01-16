@@ -75,7 +75,7 @@ function isValidNumber(numberString)
 
         if(i==0)
         {
-            if(char == 0)
+            if(char == 0 && numberString.length != 1)
             {
                 return false;
             }
@@ -185,7 +185,14 @@ function addNewMatchResult()
             errorMsg = "scoreA is invalid";
             valid = false;
         }
+
+        if(isValidNumber(scoreB) == false)
+        {
+            errorMsg = "scoreB is invalid";
+            valid = false;
+        }
     }
+
 
     if(valid == true)
     {   
